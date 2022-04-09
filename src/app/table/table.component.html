@@ -1,13 +1,13 @@
-<select name="do" id="do">
+<select name="do" id="do" (change)="onChangeSelect()" #toolbar>
   <option>Select</option>
   <option value="block">Block</option>
-  <option value="block">Unblock</option>
-  <option value="block">Delete</option>
+  <option value="unblock">Unblock</option>
+  <option value="delete">Delete</option>
 </select>
 
 <table>
   <tr>
-    <th><input type="checkbox"></th>
+    <th><input type="checkbox" id="select-all" #selectAll (change)="onChangeSelectAll()">Select All</th>
     <th>ID</th>
     <th>Name</th>
     <th>Email</th>
@@ -15,13 +15,13 @@
     <th>Date of login</th>
     <th>Status</th>
   </tr>
-  <tr *ngFor="let u of users">
-    <td><input type="checkbox"></td>
+  <tr *ngFor="let u of users;let i = index">
+    <td><input type="checkbox" id="checkbox" [(ngModel)]="checklist[i].isSelected"></td>
     <td>{{u.id}}</td>
     <td>{{u.name}}</td>
     <td>{{u.email}}</td>
-    <td>{{u.dateReg}}</td>
-    <td>{{u.dateLog}}</td>
+    <td>{{u.dateReg | date:'dd/mm/yyyy hh:mm:ss'}}</td>
+    <td>{{u.dateLog | date:'dd/mm/yyyy hh:mm:ss'}}</td>
     <td>{{u.status}}</td>
   </tr>
 </table>
