@@ -1,9 +1,7 @@
-
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, DocumentReference } from '@angular/fire/compat/firestore';
 import { Router } from '@angular/router';
 import { from, Observable } from 'rxjs';
-import { filter, take } from 'rxjs/operators';
 
 export interface UserInfo {
   id: string,
