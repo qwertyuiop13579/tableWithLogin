@@ -1,0 +1,30 @@
+<select name="do" id="do">
+  <option>Select</option>
+  <option value="block">Block</option>
+  <option value="block">Unblock</option>
+  <option value="block">Delete</option>
+</select>
+
+<table>
+  <tr>
+    <th><input type="checkbox"></th>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Email</th>
+    <th>Date of registration</th>
+    <th>Date of login</th>
+    <th>Status</th>
+  </tr>
+  <tr *ngFor="let u of users">
+    <td><input type="checkbox"></td>
+    <td>{{u.id}}</td>
+    <td>{{u.name}}</td>
+    <td>{{u.email}}</td>
+    <td>{{u.dateReg}}</td>
+    <td>{{u.dateLog}}</td>
+    <td>{{u.status}}</td>
+  </tr>
+</table>
+
+
+<button type="button" (click)="logout()">Logout</button>
