@@ -1,6 +1,8 @@
 import { ChangeDetectorRef, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService, User } from '../auth.service';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { AuthService, UserInfo } from '../auth.service';
 
 @Component({
   selector: 'app-table',
@@ -11,31 +13,33 @@ export class TableComponent implements OnInit {
 
   @ViewChild('selectAll', { static: true }) selectAllEl: any;
   @ViewChild('toolbar', { static: true }) toolbarEl: any;
-  @Input() users: User[] = [];
+  users: UserInfo[] = [];
   checklist: any = [];
   isAllSelected = false;
   usersSub: any;
 
-  constructor(private authService: AuthService, private router: Router) { }
+  users$: Observable<UserInfo[]>;
+
+  constructor(private authService: AuthService, private router: Router) {
+    this.users$ = this.authService.getUsers();
+  }
 
   ngOnInit(): void {
-    this.updateUsers();
+    console.log(localStorage);
 
-  }
-
-  updateUsers() {
-    if (this.usersSub) this.usersSub.unsubscribe();
-    this.usersSub = this.authService.users().subscribe(res => {
-      this.users = res;
+    this.users$.subscribe(users => {
+      this.users = users;
       this.checklist = [];
-      this.users.forEach((item, index) => {
-        this.checklist.push({ id: item.id, isSelected: false });
+      this.users.forEach(user => {
+        this.checklist.push({ id: user.id, isSelected: false });
       })
-    });
+    })
+
   }
+
 
   logout() {
-    this.authService.logout();
+    this.authService.signOut();
     this.router.navigate(['login']);
   }
 
@@ -51,29 +55,28 @@ export class TableComponent implements OnInit {
 
   onChangeSelect() {
     if (this.toolbarEl.nativeElement.value == 'block') {
-      this.checklist.forEach((check: any, index: any) => {
+      this.checklist.forEach((check: any) => {
         if (check.isSelected) {
-          this.users[index].status = 'block';
+          this.authService.blockUser(check.id).subscribe();
         }
-        console.log(this.users);
-        this.authService.updateUsers(this.users).subscribe(res => {
-          console.log(res);
-          this.updateUsers();
-        });
       });
-
-    } else if (this.toolbarEl.nativeElement.value == 'unblock') {
-      this.checklist.filter((item: any) => item.isSelected).forEach((check: any) => {
-        this.authService.unblock(check.id);
+    }
+    else if (this.toolbarEl.nativeElement.value == 'unblock') {
+      this.checklist.forEach((check: any) => {
+        if (check.isSelected) {
+          this.authService.unblockUser(check.id).subscribe();
+        }
       });
 
     }
     else if (this.toolbarEl.nativeElement.value == 'delete') {
-      this.checklist.filter((item: any) => item.isSelected).forEach((check: any) => {
-        this.authService.delete(check.id);
+      this.checklist.forEach((check: any) => {
+        if (check.isSelected) {
+          this.authService.deleteUser(check.id).subscribe();
+        }
       });
     }
-    this.updateUsers();
+
     this.toolbarEl.nativeElement.value = 'select';
     this.isAllSelected = false;
   }

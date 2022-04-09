@@ -19,11 +19,18 @@ export class SignupComponent implements OnInit {
   }
 
   signUp() {
-    this.authService.signup(this.name, this.email, this.password).subscribe(res => {
-      console.log('You sign up!', res);
+    const user = {
+      id: '1',
+      name: this.name,
+      email: this.email,
+      password: this.password,
+      status: 'ok',
+      dateReg: new Date().getTime(),
+      dateLog: 0,
+    };
+    this.authService.signUp(user).subscribe((res: any) => {
+      console.log('Add user');
       this.router.navigate(['login']);
-    }, err => {
-      console.log(err);
     });
   }
 

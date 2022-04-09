@@ -19,9 +19,14 @@
     "@angular/platform-browser": "~12.2.0",
     "@angular/platform-browser-dynamic": "~12.2.0",
     "@angular/router": "~12.2.0",
+    "body-parser": "^1.20.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.3",
     "firebase": "^9.6.10",
+    "jsonwebtoken": "^8.5.1",
     "rxjs": "~6.6.0",
     "tslib": "^2.3.0",
+    "uuidv4": "^6.2.13",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {

@@ -1,15 +1,17 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 
-export interface User {
+import { Injectable } from '@angular/core';
+import { AngularFirestore, AngularFirestoreCollection, DocumentReference } from '@angular/fire/compat/firestore';
+import { from, Observable } from 'rxjs';
+import { filter } from 'rxjs/operators';
+
+export interface UserInfo {
   id: string,
   name: string,
   email: string,
   password: string,
   status: string,
-  dateReg: Date,
-  dateLog: Date
+  dateReg: number,
+  dateLog: number
 }
 
 @Injectable({
@@ -17,77 +19,76 @@ export interface User {
 })
 export class AuthService {
 
-  uri = 'http://localhost:5000/api';
-  token = 'auth_token';
-  _currentUserId: any;
+  private usersCollection!: AngularFirestoreCollection<UserInfo>;
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private afs: AngularFirestore) {
+    this.usersCollection = afs.collection<UserInfo>('users');
+  }
 
-  signup(name: string, email: string, password: string) {
-    return this.http.post(this.uri + '/signup', { name: name, email: email, password: password });
+  getUsers() {
+    return this.usersCollection.valueChanges({ idField: 'id' });
+  }
+
+  signUp(user: UserInfo): Observable<DocumentReference> {
+    return from(this.usersCollection.add(user));
   }
 
   login(email: string, password: string) {
-    return this.http.post(this.uri + '/authenticate', { email: email, password: password }, { observe: 'response' });
+    return this.afs.collection<UserInfo>('users',
+      ref => ref
+        .where('email', '==', email)
+        .where('password', '==', password))
+      .valueChanges({ idField: '$id' });
   }
 
-  logout() {
-    localStorage.removeItem(this.token);
-    this._currentUserId = null;
-    console.log('You are logout');
+  updateUser(user: UserInfo): Observable<void> {
+    return from(
+      this.usersCollection.doc<UserInfo>(`${user.id}`).update({
+        name: '1',
+      }),
+    );
   }
 
-
-  addToken(res: any) {
-    localStorage.setItem(this.token, res.body.token);
+  blockUser(id: string): Observable<void> {
+    return from(
+      this.usersCollection.doc(id).update({
+        status: 'block',
+      }),
+    );
   }
 
-  public get IsLogin(): boolean {
-    return (localStorage.getItem(this.token) !== null);
+  unblockUser(id: string): Observable<void> {
+    return from(
+      this.usersCollection.doc(id).update({
+        status: 'ok',
+      }),
+    );
   }
 
-
-  users() {
-    return this.http.get<User[]>(this.uri + '/users');
+  deleteUser(id: string) {
+    return from(this.usersCollection.doc(id).delete());
   }
 
-  updateUsers(users: any) {
-    return this.http.patch(this.uri + '/users', { users: users });
+  findUser(email: string) {
+    return this.afs.collection<UserInfo>('users',
+      ref => ref
+        .where('email', '==', email))
+      .valueChanges({ idField: '$id' });
   }
 
-
-  delete(id: string) {
-    this.http.delete(this.uri + `/users/${id}`).subscribe(res => {
-      console.log(res);
-    });
-    if (id == this._currentUserId) {
-      this.logout();
-      this.router.navigate(['login']);
-    }
+  setToken(token: string) {
+    localStorage.setItem('user_token', token);
+  }
+  deleteToken() {
+    localStorage.removeItem('user_token');
   }
 
-  block(id: string) {
-    this.http.patch(this.uri + `/users/${id}`, { status: 'block' }).subscribe(res => {
-      console.log(res);
-    });
-    if (id == this._currentUserId) {
-      this.logout();
-      this.router.navigate(['login']);
-    }
+  signOut() {
+    this.deleteToken();
   }
 
-  unblock(id: string) {
-    this.http.patch(this.uri + `/users/${id}`, { status: 'good' }).subscribe(res => {
-      console.log(res);
-    });
-  }
-
-  public get currentUserId() {
-    return this._currentUserId;
-  }
-
-  public set currentUserId(res: any) {
-    this._currentUserId = res.body.signed_user.id;
+  isAuth() {
+    return !!localStorage.getItem('user_token');
   }
 
 

@@ -11,11 +11,11 @@ export class TableGuard implements CanActivate {
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    if (!this.authService.IsLogin) {
-      console.log('You are not login. Go to login page.');
+    if (!this.authService.isAuth()) {
       this.router.navigate(['login']);
+      return false;
     }
-    return this.authService.IsLogin;
+    return true;
   }
 
 }

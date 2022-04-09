@@ -15,13 +15,13 @@
     <th>Date of login</th>
     <th>Status</th>
   </tr>
-  <tr *ngFor="let u of users;let i = index">
+  <tr *ngFor="let u of users$| async;let i = index">
     <td><input type="checkbox" id="checkbox" [(ngModel)]="checklist[i].isSelected"></td>
     <td>{{u.id}}</td>
     <td>{{u.name}}</td>
     <td>{{u.email}}</td>
-    <td>{{u.dateReg | date:'dd/mm/yyyy hh:mm:ss'}}</td>
-    <td>{{u.dateLog | date:'dd/mm/yyyy hh:mm:ss'}}</td>
+    <td>{{u.dateReg | date:'dd/mm/yyyy HH:mm:ss'}}</td>
+    <td>{{u.dateLog | date:'dd/mm/yyyy HH:mm:ss'}}</td>
     <td>{{u.status}}</td>
   </tr>
 </table>

@@ -19,25 +19,19 @@ export class LoginComponent implements OnInit {
   }
 
   Login() {
-
-    this.authService.login(this.email, this.password).subscribe(res => {
-      console.log("You login in!", res);
-      this.authService.addToken(res);
-      this.authService.currentUserId = res;
+    this.authService.findUser(this.email).subscribe(res => {
+      if (!res.length) {
+        alert('Incorrect login or password');
+        return;
+      }
+      if (res[0].status == 'block') {
+        alert('This user is block');
+        return;
+      }
+      this.authService.setToken(res[0].$id);
       this.router.navigate(['table']);
-    }, err => {
-      console.log(err);
-      if (err.error.errorMessage == 'No such user. Authorisation required!') {
-        alert('No such user');
-        return;
-      }
-      if (err.error.errorMessage == 'This user is blocked!') {
-        alert('This user is blocked!');
-        return;
-      }
 
     });
-
 
 
   }
