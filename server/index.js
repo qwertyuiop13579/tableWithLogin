@@ -27,7 +27,6 @@ app.post('/api/signup', (req, res) => {
 
   if (req.body) {
     var user = req.body;
-    console.log(user);
     user.id = uuid();
     user.status = 'good';
     user.dateReg = new Date().toString();
@@ -61,7 +60,6 @@ app.post('/api/authenticate', (req, res) => {
       }
       findUser.dateLog = new Date().toString();
 
-      console.log('Good email and password!');
       var token = jwt.sign(user, JWT_Secret);
       res.status(200).send({
         signed_user: findUser,
@@ -95,6 +93,22 @@ app.patch('/api/users/:id', (req, res) => {
     const user = users.find((user) => user.id === id);
     user.status = status;
     res.send(`Status of user with id=${id} updated.`);
+  }
+  else {
+    res.status(403).send({
+      errorMessage: 'Please provide status.'
+    });
+  }
+});
+
+
+app.patch('/api/users', (req, res) => {
+
+  if (req.body) {
+    var updatedUsers = req.body.users;
+    console.log(updatedUsers);
+    users = updatedUsers;
+    res.send(`Users updated.`);
   }
   else {
     res.status(403).send({

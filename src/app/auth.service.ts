@@ -51,17 +51,29 @@ export class AuthService {
     return this.http.get<User[]>(this.uri + '/users');
   }
 
+  updateUsers(users: any) {
+    return this.http.patch(this.uri + '/users', { users: users });
+  }
+
 
   delete(id: string) {
     this.http.delete(this.uri + `/users/${id}`).subscribe(res => {
       console.log(res);
     });
+    if (id == this._currentUserId) {
+      this.logout();
+      this.router.navigate(['login']);
+    }
   }
 
   block(id: string) {
     this.http.patch(this.uri + `/users/${id}`, { status: 'block' }).subscribe(res => {
       console.log(res);
     });
+    if (id == this._currentUserId) {
+      this.logout();
+      this.router.navigate(['login']);
+    }
   }
 
   unblock(id: string) {
