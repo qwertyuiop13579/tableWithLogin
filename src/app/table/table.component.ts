@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService, UserInfo } from '../auth.service';
@@ -8,7 +8,7 @@ import { AuthService, UserInfo } from '../auth.service';
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss']
 })
-export class TableComponent implements OnInit {
+export class TableComponent implements OnInit, OnDestroy {
 
   @ViewChild('selectAll', { static: true }) selectAllEl: any;
   @ViewChild('toolbar', { static: true }) toolbarEl: any;
@@ -16,6 +16,7 @@ export class TableComponent implements OnInit {
   checklist: any = [];
   isAllSelected = false;
   usersSub: any;
+  currentUserSub: any;
 
   users$: Observable<UserInfo[]>;
 
@@ -24,14 +25,26 @@ export class TableComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(localStorage);
+    // console.log(localStorage);
 
-    this.users$.subscribe(users => {
+    this.usersSub = this.users$.subscribe(users => {
       this.users = users;
       this.checklist = [];
       this.users.forEach(user => {
         this.checklist.push({ id: user.id, isSelected: false });
-      })
+      });
+
+      if (!this.authService.isAuth()) this.authService.signOut();
+    })
+    this.currentUserSub = this.authService.findUserById(this.authService.getToken()).subscribe(res => {
+      if (!res?.email) {
+        console.log('User deleted! Logout.');
+        this.authService.signOut();
+        return;
+      }
+      if (res.status == 'block') {
+        this.authService.signOut();
+      }
     })
 
   }
@@ -84,6 +97,11 @@ export class TableComponent implements OnInit {
       }
     });
     this.isAllSelected = false;
+  }
+
+  ngOnDestroy(): void {
+    if (this.usersSub) this.usersSub.unsubscribe();
+    if (this.currentUserSub) this.currentUserSub.unsubscribe();
   }
 
 }

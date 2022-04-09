@@ -37,16 +37,9 @@ export class AuthService {
       ref => ref
         .where('email', '==', email)
         .where('password', '==', password))
-      .valueChanges({ idField: '$id' });
+      .valueChanges({ idField: 'id' });
   }
 
-  updateUser(user: UserInfo): Observable<void> {
-    return from(
-      this.usersCollection.doc<UserInfo>(`${user.id}`).update({
-        name: '1',
-      }),
-    );
-  }
 
   blockUser(id: string): Observable<void> {
     return from(
@@ -72,7 +65,12 @@ export class AuthService {
     return this.afs.collection<UserInfo>('users',
       ref => ref
         .where('email', '==', email))
-      .valueChanges({ idField: '$id' });
+      .valueChanges({ idField: 'id' });
+  }
+
+
+  findUserById(id: string) {
+    return from(this.usersCollection.doc(id).valueChanges({ idField: 'id' }));
   }
 
   setToken(token: string) {
@@ -83,8 +81,9 @@ export class AuthService {
     localStorage.removeItem('user_token');
   }
 
-  getToken() {
-    return localStorage.getItem('user_token');
+  getToken(): string {
+    if (!localStorage.getItem('user_token')) return "";
+    return localStorage.getItem('user_token')!;
   }
 
   signOut() {
