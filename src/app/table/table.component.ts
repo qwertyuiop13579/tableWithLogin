@@ -1,5 +1,6 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { AuthService, User } from '../auth.service';
 
 @Component({
@@ -11,20 +12,27 @@ export class TableComponent implements OnInit {
 
   @ViewChild('selectAll', { static: true }) selectAllEl: any;
   @ViewChild('toolbar', { static: true }) toolbarEl: any;
-  users: User[] = [];
+  @Input() users: User[] = [];
   checklist: any = [];
   isAllSelected = false;
+  usersSub: any;
 
   constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit(): void {
-    this.authService.users().subscribe(res => {
+    this.updateUsers();
+
+  }
+
+  updateUsers() {
+    if (this.usersSub) this.usersSub.unsubscribe();
+    this.usersSub = this.authService.users().subscribe(res => {
       this.users = res;
+      this.checklist = [];
       this.users.forEach((item, index) => {
-        this.checklist.push({ id: index, isSelected: false });
+        this.checklist.push({ id: item.id, isSelected: false });
       })
     });
-
   }
 
   logout() {
@@ -44,14 +52,26 @@ export class TableComponent implements OnInit {
 
   onChangeSelect() {
     if (this.toolbarEl.nativeElement.value == 'block') {
+      this.checklist.filter((item: any) => item.isSelected).forEach((check: any) => {
+        this.authService.block(check.id);
+        this.updateUsers();
+      });
 
     } else if (this.toolbarEl.nativeElement.value == 'unblock') {
+      this.checklist.filter((item: any) => item.isSelected).forEach((check: any) => {
+        this.authService.unblock(check.id);
+        this.updateUsers();
+      });
 
     }
     else if (this.toolbarEl.nativeElement.value == 'delete') {
-
+      this.checklist.filter((item: any) => item.isSelected).forEach((check: any) => {
+        this.authService.delete(check.id);
+        this.updateUsers();
+      });
     }
-
+    this.toolbarEl.nativeElement.value = 'select';
+    this.isAllSelected = false;
   }
 
 }

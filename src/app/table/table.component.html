@@ -1,5 +1,5 @@
 <select name="do" id="do" (change)="onChangeSelect()" #toolbar>
-  <option>Select</option>
+  <option value="select">Select</option>
   <option value="block">Block</option>
   <option value="unblock">Unblock</option>
   <option value="delete">Delete</option>
@@ -7,7 +7,7 @@
 
 <table>
   <tr>
-    <th><input type="checkbox" id="select-all" #selectAll (change)="onChangeSelectAll()">Select All</th>
+    <th><input type="checkbox" id="select-all" [checked]="isAllSelected" #selectAll (change)="onChangeSelectAll()">Select All</th>
     <th>ID</th>
     <th>Name</th>
     <th>Email</th>

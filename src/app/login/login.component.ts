@@ -23,6 +23,7 @@ export class LoginComponent implements OnInit {
     this.authService.login(this.email, this.password).subscribe(res => {
       console.log("You login in!", res);
       this.authService.addToken(res);
+      this.authService.currentUserId = res;
       this.router.navigate(['table']);
     }, err => {
       console.log(err);

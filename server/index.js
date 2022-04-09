@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 const JWT_Secret = 'your_secret_key';
 
 var users = [
-  { id: "1", name: "name1", email: '1', password: '1', status: 'lock', dateReg: '0', dateLog: '0' },
+  { id: "1", name: "name1", email: '1', password: '1', status: 'good', dateReg: '0', dateLog: '0' },
 ]
 
 app.listen(5000, () => console.log('Server started on port 5000'));
@@ -29,7 +29,7 @@ app.post('/api/signup', (req, res) => {
     var user = req.body;
     console.log(user);
     user.id = uuid();
-    user.status = 'lock';
+    user.status = 'good';
     user.dateReg = new Date().toString();
     user.dateLog = null;
     users.push(user);
@@ -64,7 +64,7 @@ app.post('/api/authenticate', (req, res) => {
       console.log('Good email and password!');
       var token = jwt.sign(user, JWT_Secret);
       res.status(200).send({
-        signed_user: user,
+        signed_user: findUser,
         token: token,
       });
     } else {
@@ -79,5 +79,29 @@ app.post('/api/authenticate', (req, res) => {
   }
 
 });
+
+app.delete('/api/users/:id', (req, res) => {
+  const { id } = req.params;
+  users = users.filter((user) => user.id !== id);
+  res.send(`User with id=${id} deleted.`);
+});
+
+
+app.patch('/api/users/:id', (req, res) => {
+
+  if (req.body) {
+    var status = req.body.status;
+    const { id } = req.params;
+    const user = users.find((user) => user.id === id);
+    user.status = status;
+    res.send(`Status of user with id=${id} updated.`);
+  }
+  else {
+    res.status(403).send({
+      errorMessage: 'Please provide status.'
+    });
+  }
+})
+
 
 

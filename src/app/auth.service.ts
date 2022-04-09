@@ -19,6 +19,7 @@ export class AuthService {
 
   uri = 'http://localhost:5000/api';
   token = 'auth_token';
+  _currentUserId: any;
 
   constructor(private http: HttpClient, private router: Router) { }
 
@@ -32,6 +33,7 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem(this.token);
+    this._currentUserId = null;
     console.log('You are logout');
   }
 
@@ -48,5 +50,33 @@ export class AuthService {
   users() {
     return this.http.get<User[]>(this.uri + '/users');
   }
+
+
+  delete(id: string) {
+    this.http.delete(this.uri + `/users/${id}`).subscribe(res => {
+      console.log(res);
+    });
+  }
+
+  block(id: string) {
+    this.http.patch(this.uri + `/users/${id}`, { status: 'block' }).subscribe(res => {
+      console.log(res);
+    });
+  }
+
+  unblock(id: string) {
+    this.http.patch(this.uri + `/users/${id}`, { status: 'good' }).subscribe(res => {
+      console.log(res);
+    });
+  }
+
+  public get currentUserId() {
+    return this._currentUserId;
+  }
+
+  public set currentUserId(res: any) {
+    this._currentUserId = res.body.signed_user.id;
+  }
+
 
 }
