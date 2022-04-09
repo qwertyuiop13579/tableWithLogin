@@ -1,8 +1,9 @@
 
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, DocumentReference } from '@angular/fire/compat/firestore';
+import { Router } from '@angular/router';
 import { from, Observable } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 
 export interface UserInfo {
   id: string,
@@ -21,7 +22,7 @@ export class AuthService {
 
   private usersCollection!: AngularFirestoreCollection<UserInfo>;
 
-  constructor(private afs: AngularFirestore) {
+  constructor(private afs: AngularFirestore, private router: Router) {
     this.usersCollection = afs.collection<UserInfo>('users');
   }
 
@@ -79,12 +80,18 @@ export class AuthService {
   setToken(token: string) {
     localStorage.setItem('user_token', token);
   }
+
   deleteToken() {
     localStorage.removeItem('user_token');
   }
 
+  getToken() {
+    return localStorage.getItem('user_token');
+  }
+
   signOut() {
     this.deleteToken();
+    this.router.navigate(['login']);
   }
 
   isAuth() {

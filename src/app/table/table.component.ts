@@ -1,7 +1,6 @@
-import { ChangeDetectorRef, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { AuthService, UserInfo } from '../auth.service';
 
 @Component({
@@ -53,31 +52,37 @@ export class TableComponent implements OnInit {
     }
   }
 
-  onChangeSelect() {
-    if (this.toolbarEl.nativeElement.value == 'block') {
-      this.checklist.forEach((check: any) => {
-        if (check.isSelected) {
-          this.authService.blockUser(check.id).subscribe();
-        }
-      });
-    }
-    else if (this.toolbarEl.nativeElement.value == 'unblock') {
-      this.checklist.forEach((check: any) => {
-        if (check.isSelected) {
-          this.authService.unblockUser(check.id).subscribe();
-        }
-      });
+  onClickBlock() {
+    this.checklist.forEach((checkItem: any) => {
+      if (checkItem.isSelected) {
+        this.authService.blockUser(checkItem.id).subscribe();
 
-    }
-    else if (this.toolbarEl.nativeElement.value == 'delete') {
-      this.checklist.forEach((check: any) => {
-        if (check.isSelected) {
-          this.authService.deleteUser(check.id).subscribe();
+        // signout if block current user
+        if (checkItem.id === this.authService.getToken()) {
+          this.authService.signOut();
         }
-      });
-    }
+      }
+    });
+    this.isAllSelected = false;
+  }
 
-    this.toolbarEl.nativeElement.value = 'select';
+  onClickUnblock() {
+    this.checklist.forEach((checkItem: any) => {
+      if (checkItem.isSelected) {
+        this.authService.unblockUser(checkItem.id).subscribe();
+      }
+    });
+    this.isAllSelected = false;
+  }
+
+  onClickDelete() {
+    this.checklist.forEach((checkItem: any) => {
+      if (checkItem.isSelected) {
+        this.authService.deleteUser(checkItem.id).subscribe(() => { });
+        // signout if delete current user
+        if (checkItem.id == this.authService.getToken()) this.authService.signOut();
+      }
+    });
     this.isAllSelected = false;
   }
 

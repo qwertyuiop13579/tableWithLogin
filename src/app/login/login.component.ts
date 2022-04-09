@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError } from 'rxjs/operators';
+import { catchError, take } from 'rxjs/operators';
 import { AuthService } from '../auth.service';
 
 @Component({
@@ -8,9 +8,10 @@ import { AuthService } from '../auth.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
   email = '';
   password = '';
+  subscription: any;
 
 
   constructor(private authService: AuthService, private router: Router) { }
@@ -19,7 +20,7 @@ export class LoginComponent implements OnInit {
   }
 
   Login() {
-    this.authService.findUser(this.email).subscribe(res => {
+    this.subscription = this.authService.findUser(this.email).pipe(take(1)).subscribe(res => {
       if (!res.length) {
         alert('Incorrect login or password');
         return;
@@ -32,8 +33,10 @@ export class LoginComponent implements OnInit {
       this.router.navigate(['table']);
 
     });
+  }
 
-
+  ngOnDestroy(): void {
+    if (this.subscription) this.subscription.unsubscribe();
   }
 
 }
