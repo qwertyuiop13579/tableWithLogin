@@ -40,6 +40,14 @@ export class AuthService {
       .valueChanges({ idField: 'id' });
   }
 
+  updateUserDatelogin(id: string, date: number): Observable<void> {
+    return from(
+      this.usersCollection.doc(id).update({
+        dateLog: date,
+      }),
+    );
+  }
+
 
   blockUser(id: string): Observable<void> {
     return from(

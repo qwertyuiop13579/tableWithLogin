@@ -29,8 +29,10 @@ export class LoginComponent implements OnInit, OnDestroy {
         alert('This user is block');
         return;
       }
-      this.authService.setToken(res[0].id);
-      this.router.navigate(['table']);
+      this.authService.updateUserDatelogin(res[0].id, new Date().getTime()).subscribe(response => {
+        this.authService.setToken(res[0].id);
+        this.router.navigate(['table']);
+      });
 
     });
   }
