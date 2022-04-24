@@ -13,6 +13,7 @@ import { TableComponent } from './table/table.component';
 import { SignupComponent } from './signup/signup.component';
 import { TableGuard } from './table.guard';
 import { UsersComponent } from './users/users.component';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { UsersComponent } from './users/users.component';
     ReactiveFormsModule,
     HttpClientModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
-    AngularFirestoreModule
+    AngularFirestoreModule,
+    InfiniteScrollModule
   ],
   providers: [TableGuard],
   bootstrap: [AppComponent]

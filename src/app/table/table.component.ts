@@ -15,17 +15,32 @@ export interface IData {
 })
 export class TableComponent implements OnInit, OnDestroy {
   data: IData[] = [];
+  listArray: string[] = [];
+  sum = 20;
+  step = 10;
 
   constructor(private router: Router) {
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < this.sum; i++) {
       this.data.push({ id: '1', fio: 'fio', address: 'address', phone: 'phone' });
     }
   }
 
-  ngOnInit(): void {
+  ngOnInit(): void { }
+
+  onScrollDown(ev: any) {
+    console.log("Scrolled down! Add 10 items.");
+
+    this.sum += this.step;
+    this.addItems();
 
   }
 
+  addItems() {
+    this.listArray = [];
+    for (let i = 0; i < this.step; i++) {
+      this.data.push({ id: '1', fio: 'fio', address: 'address', phone: 'phone' });
+    }
+  }
 
   ngOnDestroy(): void {
 
