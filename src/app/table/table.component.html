@@ -1,11 +1,7 @@
 <div class="form-body">
   <div class="row">
     <div class="form-holder">
-      <div class="btn-group" role="group">
-        <button type="button" class="btn btn-warning  btn-lg" (click)="onClickBlock()">Block</button>
-        <button type="button" class="btn btn-primary btn-lg" (click)="onClickUnblock()">Unblock</button>
-        <button type="button" class="btn btn-danger btn-lg" (click)="onClickDelete()">Delete</button>
-      </div>
+
 
       <div class="container">
         <div class="row">
@@ -14,10 +10,6 @@
               <thead>
                 <tr>
                   <th scope="col">
-                    <div>
-                      <input class="form-check-input" type="checkbox" [checked]="isAllSelected" #selectAll
-                        (change)="onChangeSelectAll()">
-                    </div>
                   </th>
                   <th scope="col">ID</th>
                   <th scope="col">Name</th>
@@ -28,18 +20,10 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let u of users;let i = index">
+                <tr>
                   <td>
-                    <div class="">
-                      <input type="checkbox" class="form-check-input" [(ngModel)]="checklist[i].isSelected">
-                    </div>
                   </td>
-                  <td>{{u.id}}</td>
-                  <td>{{u.name}}</td>
-                  <td>{{u.email}}</td>
-                  <td>{{u.dateReg | date:'dd/MM/yyyy HH:mm:ss'}}</td>
-                  <td>{{u.dateLog | date:'dd/MM/yyyy HH:mm:ss'}}</td>
-                  <td>{{u.status}}</td>
+                  <td>1</td>
                 </tr>
               </tbody>
             </table>
@@ -47,12 +31,6 @@
           </div>
         </div>
       </div>
-
-
-      <div class="btn-group" role="group">
-        <button type="button" class="btn btn-success" (click)="logout()">Logout</button>
-      </div>
-
 
     </div>
   </div>

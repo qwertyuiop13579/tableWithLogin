@@ -4,12 +4,14 @@ import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { TableGuard } from './table.guard';
 import { TableComponent } from './table/table.component';
+import { UsersComponent } from './users/users.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'signup', component: SignupComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'table', component: TableComponent, canActivate:[TableGuard] }
+  { path: 'table', component: TableComponent, canActivate: [TableGuard] },
+  { path: 'users', component: UsersComponent, canActivate: [TableGuard] },
 ];
 
 @NgModule({

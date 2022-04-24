@@ -12,13 +12,15 @@ import { LoginComponent } from './login/login.component';
 import { TableComponent } from './table/table.component';
 import { SignupComponent } from './signup/signup.component';
 import { TableGuard } from './table.guard';
+import { UsersComponent } from './users/users.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     TableComponent,
-    SignupComponent
+    SignupComponent,
+    UsersComponent
   ],
   imports: [
     BrowserModule,
