@@ -1,37 +1,38 @@
-<div class="form-body">
-  <div class="row">
-    <div class="form-holder">
+<select name="lang" id="lang">
+  <option value="en">USA-en</option>
+  <option value="ru">RUS-ru</option>
+  <option value="uk">UKR-uk</option>
+  <option value="be">BEL-be</option>
+</select>
 
-
-      <div class="container">
-        <div class="row">
-          <div class="col-12">
-            <table class="table table-bordered">
-              <thead>
-                <tr>
-                  <th scope="col">
-                  </th>
-                  <th scope="col">ID</th>
-                  <th scope="col">Name</th>
-                  <th scope="col">Email</th>
-                  <th scope="col">Date of registration</th>
-                  <th scope="col">Date of login</th>
-                  <th scope="col">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>
-                  </td>
-                  <td>1</td>
-                </tr>
-              </tbody>
-            </table>
-
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
+<div class="slidecontainer">
+  <input type="range" min="0" max="10" value="0" class="slider" id="myRange">
+  <input type="number" min="0" max="1000" class="number__input">
 </div>
+
+<div class="slidecontainer">
+  <input type="text" class="number__input">
+  <button>Random</button>
+</div>
+
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">ID</th>
+      <th scope="col">FIO</th>
+      <th scope="col">Address</th>
+      <th scope="col">Phone</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let d of data;let i = index">
+      <td>{{i + 1 }}</td>
+      <td>{{d.id}}</td>
+      <td>{{d.fio}}</td>
+      <td>{{d.address}}</td>
+      <td>{{d.phone}}</td>
+    </tr>
+  </tbody>
+</table>
