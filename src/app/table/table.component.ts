@@ -46,7 +46,13 @@ export class TableComponent implements OnInit, OnDestroy {
 
   onChangeLang() {
     console.log(this.selectedLang);
-    //TODO: update table
+    this.tableService.selectedLang = this.selectedLang;
+    this.data = [];
+    for (let i = 0; i < this.sum; i++) {
+      this.tableService.generate().pipe(take(1)).subscribe(res => {
+        this.data.push(res);
+      });
+    }
   }
 
   onChangeErrorsCount() {

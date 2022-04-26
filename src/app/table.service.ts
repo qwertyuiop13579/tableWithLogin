@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
-import { from, interval, merge, Observable, of } from 'rxjs';
-import { map, switchMap, take, tap } from 'rxjs/operators';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { Observable, of } from 'rxjs';
+import { map, switchMap, } from 'rxjs/operators';
 
 export interface Name {
   sex: 'male' | 'female',
@@ -47,7 +47,7 @@ export interface Item {
   providedIn: 'root'
 })
 export class TableService {
-  selectedLang = 'en';
+  private _selectedLang = 'en';
   errorsCount = 0;
 
 
@@ -68,10 +68,11 @@ export class TableService {
 
   generate() {
     var name = '';
+    var sex: 'male' | 'female';
     var surname = '';
     var phone = '';
     var country = '';
-    let cities: any;
+    var cities: any;
     var randomCity = '';
     var street;
     var newItem: Item;
@@ -79,12 +80,14 @@ export class TableService {
     return this.getJSON('assets/data/names.json').pipe(
       switchMap(data => {
         let randomItem = data[Math.floor(Math.random() * data.length)];
+        sex = randomItem.sex;
         if (this.selectedLang == 'en') name = randomItem.en;
         else name = randomItem.ru;
         newItem = { ...newItem, name: name };
         return of(newItem);
       }),
       switchMap(res => this.getJSON('assets/data/surnames.json').pipe(map(data => {
+        data = data.filter((item: any) => item.sex == sex);
         let randomItem = data[Math.floor(Math.random() * data.length)];
         if (this.selectedLang == 'en') surname = randomItem.en;
         else surname = randomItem.ru;
@@ -126,5 +129,12 @@ export class TableService {
         };
         return newItem;
       }))));
+  }
+
+  public get selectedLang() {
+    return this._selectedLang;
+  }
+  public set selectedLang(value) {
+    this._selectedLang = value;
   }
 }
