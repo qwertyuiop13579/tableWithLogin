@@ -1,5 +1,8 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
+import { from, Observable } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 export interface Name {
   sex: 'male' | 'female',
@@ -30,6 +33,14 @@ export interface Phone {
   format: 'ru' | 'en'
 }
 
+export interface Item {
+  id: string,
+  name: string,
+  surname: string,
+  address: string,
+  phone: string,
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -48,9 +59,91 @@ export class TableService {
   //phones
   private phonesCollection!: AngularFirestoreCollection<Phone>;
 
-  constructor(private afs: AngularFirestore) { }
+  constructor(private afs: AngularFirestore, private http: HttpClient) {
+    this.namesCollection = this.afs.collection<Name>('names');
+    this.surnamesCollection = this.afs.collection<Surname>('surnames');
+    this.countriesAndCitiesCollection = this.afs.collection<Country>('countriesAndCities');
+    this.streetCollection = this.afs.collection<Street>('streets');
+    this.phonesCollection = this.afs.collection<Phone>('phones');
+  }
+
+  public getJSON(url:string): Observable<any> {
+    return this.http.get(url);
+  }
 
   generate() {
+    var name = '';
+    var surname = '';
+    var phone = '';
+    var address = '';
+    let newItem: Item = {
+      id: '',
+      name: '',
+      surname: '',
+      phone: '',
+      address: ''
+    };
+
+
+    // this.getJSON('../assets/data/names,json').subscribe(data => {
+    //   let randomItem = data[Math.floor(Math.random() * data.length)];
+    //   if (this.selectedLang == 'en') name = randomItem.en;
+    //   else name = randomItem.ru;
+    //  });
+
+
+    this.namesCollection.valueChanges().pipe(take(1)).subscribe(res => {
+      let randomItem = res[Math.floor(Math.random() * res.length)];
+      if (this.selectedLang == 'en') name = randomItem.en;
+      else name = randomItem.ru;
+    });
+
+    // this.surnamesCollection.valueChanges().pipe(take(1)).subscribe(res => {
+    //   let randomItem = res[Math.floor(Math.random() * res.length)];
+    //   if (this.selectedLang == 'en') surname = randomItem.en;
+    //   else surname = randomItem.ru;
+    // });
+
+    // this.afs.collection<Phone>('phones', ref =>
+    //   ref.where('format', '==', this.selectedLang)
+    // ).valueChanges().pipe(take(1)).subscribe(res => {
+    //   let randomItem = res[Math.floor(Math.random() * res.length)];
+    //   phone = randomItem.text;
+    // });
+    // let country = '';
+    // let randomCity = '';
+    // let street;
+    // this.afs.collection<Country>('countriesAndCities').valueChanges().pipe(take(1)).subscribe(res => {
+    //   let cities: any;
+    //   let randomItem = res[Math.floor(Math.random() * res.length)];
+    //   if (this.selectedLang == 'en') {
+    //     country = randomItem.en;
+    //     cities = randomItem.citiesEn;
+    //   }
+    //   else {
+    //     country = randomItem.ru;
+    //     cities = randomItem.citiesRu;
+    //   }
+    //   randomCity = cities[Math.floor(Math.random() * cities.length)];
+    // });
+
+    // this.afs.collection<Street>('streets').valueChanges({ idField: 'id' }).pipe(take(1)).subscribe(res => {
+    //   let randomItem = res[Math.floor(Math.random() * res.length)];
+    //   if (this.selectedLang == 'en') {
+    //     street = randomItem.en;
+    //   }
+    //   else {
+    //     street = randomItem.ru;
+    //   }
+    //   newItem = {
+    //     id: randomItem.id,
+    //     name: name,
+    //     surname: surname,
+    //     phone: phone,
+    //     address: `${country}, ${randomCity}, ${street}, ${Math.floor(Math.random() * 100)} - ${Math.floor(Math.random() * 30)}`,
+    //   };
+    //   console.log(newItem);
+    // });
   }
 
   addNames() {

@@ -1,13 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { TableService } from '../table.service';
-
-export interface IData {
-  id: string,
-  fio: string,
-  address: string,
-  phone: string,
-}
+import { TableService, Item } from '../table.service';
 
 @Component({
   selector: 'app-table',
@@ -15,7 +8,7 @@ export interface IData {
   styleUrls: ['./table.component.scss']
 })
 export class TableComponent implements OnInit, OnDestroy {
-  data: IData[] = [];
+  data: Item[] = [];
   listArray: string[] = [];
   sum = 20;
   step = 10;
@@ -25,7 +18,7 @@ export class TableComponent implements OnInit, OnDestroy {
 
   constructor(private router: Router, private tableService: TableService) {
     for (let i = 0; i < this.sum; i++) {
-      this.data.push({ id: '1', fio: 'fio', address: 'address', phone: 'phone' });
+      this.data.push({ id: '1', name: 'name', surname: 'surname', address: 'address', phone: 'phone' });
     }
   }
 
@@ -42,7 +35,7 @@ export class TableComponent implements OnInit, OnDestroy {
   addItems() {
     this.listArray = [];
     for (let i = 0; i < this.step; i++) {
-      this.data.push({ id: '1', fio: 'fio', address: 'address', phone: 'phone' });
+      this.data.push({ id: '1', name: 'name', surname: 'surname', address: 'address', phone: 'phone' });
     }
   }
 

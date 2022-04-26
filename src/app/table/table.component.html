@@ -28,7 +28,8 @@
         <tr>
           <th scope="col">#</th>
           <th scope="col">ID</th>
-          <th scope="col">FIO</th>
+          <th scope="col">Name</th>
+          <th scope="col">Surname</th>
           <th scope="col">Address</th>
           <th scope="col">Phone</th>
         </tr>
@@ -37,7 +38,8 @@
         <tr *ngFor="let d of data;let i = index">
           <td>{{i + 1 }}</td>
           <td>{{d.id}}</td>
-          <td>{{d.fio}}</td>
+          <td>{{d.name}}</td>
+          <td>{{d.surname}}</td>
           <td>{{d.address}}</td>
           <td>{{d.phone}}</td>
         </tr>
