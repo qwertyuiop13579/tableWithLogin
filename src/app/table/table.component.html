@@ -1,24 +1,27 @@
 <div class="table__content">
-  <select name="lang" id="lang" class="select">
+  <label for="">Language</label>
+  <select name="lang" id="lang" class="select" (change)="onChangeLang()" [(ngModel)]="selectedLang">
     <option value="en">USA-en</option>
     <option value="ru">RUS-ru</option>
-    <option value="uk">UKR-uk</option>
-    <option value="be">BEL-be</option>
+    <!-- <option value="uk">UKR-uk</option>
+    <option value="be">BEL-be</option> -->
   </select>
 
   <div class="error error__container">
-    <label for="range">Range</label>
-    <input type="range" min="0" max="10" value="0" name="range" class="error__range">
-    <input type="number" min="0" max="1000" class="error__input">
+    <label for="range" class="error__text">Errors</label>
+    <input type="range" min="0" max="10" step="1" [(ngModel)]="ErrorsCount">
+    <input type="number" min="0" max="1000" class="error__input" [(ngModel)]="ErrorsCount"
+      (change)="onChangeErrorsCount()">
   </div>
 
-  <div class="seed seed__container">
-    <input type="text" class="seed__input">
+  <!-- <div class="seed seed__container">
+    <input type="text" class="seed__input" [(ngModel)]="SeedInput" (input)="onChangeSeed()">
     <button class="seed__btn">Random</button>
-  </div>
+  </div> -->
 
   <div class="search-results" infinite-scroll [infiniteScrollDistance]="0" [infiniteScrollThrottle]="1000"
     (scrolled)="onScrollDown($event)">
+    <button class="seed__btn" (click)="onClick()">DO IT</button>
 
     <table class="table table-bordered">
       <thead>

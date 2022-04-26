@@ -1,5 +1,8 @@
 .table__content {
   padding: 20px;
+  label {
+    margin-right: 10px;
+  }
 }
 
 .select {
@@ -7,8 +10,12 @@
   margin-bottom: 20px;
 }
 
-.error__container {
+.error {
   margin-bottom: 20px;
+
+  &__text {
+    margin-right: 10px;
+  }
 }
 
 .seed__container {

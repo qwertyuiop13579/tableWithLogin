@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { TableService } from '../table.service';
 
 export interface IData {
   id: string,
@@ -18,8 +19,11 @@ export class TableComponent implements OnInit, OnDestroy {
   listArray: string[] = [];
   sum = 20;
   step = 10;
+  selectedLang: any = 'en';
+  ErrorsCount = 0;
+  SeedInput = "";
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private tableService: TableService) {
     for (let i = 0; i < this.sum; i++) {
       this.data.push({ id: '1', fio: 'fio', address: 'address', phone: 'phone' });
     }
@@ -42,8 +46,25 @@ export class TableComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
-
+  onChangeLang() {
+    console.log(this.selectedLang);
+    //TODO: update table
   }
+
+  onChangeErrorsCount() {
+    console.log(this.ErrorsCount);
+    //TODO: update table
+  }
+
+  onChangeSeed() {
+    console.log(this.SeedInput);
+    //TODO: update table
+  }
+
+  onClick() {
+    this.tableService.generate();
+  }
+
+  ngOnDestroy(): void { }
 
 }
