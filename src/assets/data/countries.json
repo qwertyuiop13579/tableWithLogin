@@ -1,0 +1,14 @@
+[
+  {
+    "ru": "COUNTRYRU1",
+    "en": "COUNTRYEN1",
+    "citiesRu": ["cityRu11", "cityRu12"],
+    "citiesEn": ["cityEN11", "cityEN12"]
+  },
+  {
+    "ru": "COUNTRYRU2",
+    "en": "COUNTRYEN2",
+    "citiesRu": ["cityRu21", "cityRu22"],
+    "citiesEn": ["cityEN21", "cityEN22"]
+  }
+]

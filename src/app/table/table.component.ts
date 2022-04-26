@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { take } from 'rxjs/operators';
 import { TableService, Item } from '../table.service';
 
 @Component({
@@ -18,7 +19,9 @@ export class TableComponent implements OnInit, OnDestroy {
 
   constructor(private router: Router, private tableService: TableService) {
     for (let i = 0; i < this.sum; i++) {
-      this.data.push({ id: '1', name: 'name', surname: 'surname', address: 'address', phone: 'phone' });
+      this.tableService.generate().pipe(take(1)).subscribe(res => {
+        this.data.push(res);
+      });
     }
   }
 
@@ -35,7 +38,9 @@ export class TableComponent implements OnInit, OnDestroy {
   addItems() {
     this.listArray = [];
     for (let i = 0; i < this.step; i++) {
-      this.data.push({ id: '1', name: 'name', surname: 'surname', address: 'address', phone: 'phone' });
+      this.tableService.generate().pipe(take(1)).subscribe(res => {
+        this.data.push(res);
+      });
     }
   }
 
@@ -55,7 +60,7 @@ export class TableComponent implements OnInit, OnDestroy {
   }
 
   onClick() {
-    this.tableService.generate();
+    this.tableService.generate().subscribe(res => console.log(res));
   }
 
   ngOnDestroy(): void { }

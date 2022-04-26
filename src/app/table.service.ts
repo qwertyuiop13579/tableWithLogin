@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
-import { from, Observable } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { from, interval, merge, Observable, of } from 'rxjs';
+import { map, switchMap, take, tap } from 'rxjs/operators';
 
 export interface Name {
   sex: 'male' | 'female',
@@ -48,26 +48,11 @@ export class TableService {
   selectedLang = 'en';
   errorsCount = 0;
 
-  //names
-  private namesCollection!: AngularFirestoreCollection<Name>;
-  //surnames
-  private surnamesCollection!: AngularFirestoreCollection<Surname>;
-  //countriesAndCities
-  private countriesAndCitiesCollection!: AngularFirestoreCollection<Country>;
-  //streets
-  private streetCollection!: AngularFirestoreCollection<Street>;
-  //phones
-  private phonesCollection!: AngularFirestoreCollection<Phone>;
 
   constructor(private afs: AngularFirestore, private http: HttpClient) {
-    this.namesCollection = this.afs.collection<Name>('names');
-    this.surnamesCollection = this.afs.collection<Surname>('surnames');
-    this.countriesAndCitiesCollection = this.afs.collection<Country>('countriesAndCities');
-    this.streetCollection = this.afs.collection<Street>('streets');
-    this.phonesCollection = this.afs.collection<Phone>('phones');
   }
 
-  public getJSON(url:string): Observable<any> {
+  public getJSON(url: string): Observable<any> {
     return this.http.get(url);
   }
 
@@ -75,75 +60,62 @@ export class TableService {
     var name = '';
     var surname = '';
     var phone = '';
-    var address = '';
-    let newItem: Item = {
-      id: '',
-      name: '',
-      surname: '',
-      phone: '',
-      address: ''
-    };
+    var country = '';
+    let cities: any;
+    var randomCity = '';
+    var street;
+    var newItem: Item;
 
-
-    // this.getJSON('../assets/data/names,json').subscribe(data => {
-    //   let randomItem = data[Math.floor(Math.random() * data.length)];
-    //   if (this.selectedLang == 'en') name = randomItem.en;
-    //   else name = randomItem.ru;
-    //  });
-
-
-    this.namesCollection.valueChanges().pipe(take(1)).subscribe(res => {
-      let randomItem = res[Math.floor(Math.random() * res.length)];
-      if (this.selectedLang == 'en') name = randomItem.en;
-      else name = randomItem.ru;
-    });
-
-    // this.surnamesCollection.valueChanges().pipe(take(1)).subscribe(res => {
-    //   let randomItem = res[Math.floor(Math.random() * res.length)];
-    //   if (this.selectedLang == 'en') surname = randomItem.en;
-    //   else surname = randomItem.ru;
-    // });
-
-    // this.afs.collection<Phone>('phones', ref =>
-    //   ref.where('format', '==', this.selectedLang)
-    // ).valueChanges().pipe(take(1)).subscribe(res => {
-    //   let randomItem = res[Math.floor(Math.random() * res.length)];
-    //   phone = randomItem.text;
-    // });
-    // let country = '';
-    // let randomCity = '';
-    // let street;
-    // this.afs.collection<Country>('countriesAndCities').valueChanges().pipe(take(1)).subscribe(res => {
-    //   let cities: any;
-    //   let randomItem = res[Math.floor(Math.random() * res.length)];
-    //   if (this.selectedLang == 'en') {
-    //     country = randomItem.en;
-    //     cities = randomItem.citiesEn;
-    //   }
-    //   else {
-    //     country = randomItem.ru;
-    //     cities = randomItem.citiesRu;
-    //   }
-    //   randomCity = cities[Math.floor(Math.random() * cities.length)];
-    // });
-
-    // this.afs.collection<Street>('streets').valueChanges({ idField: 'id' }).pipe(take(1)).subscribe(res => {
-    //   let randomItem = res[Math.floor(Math.random() * res.length)];
-    //   if (this.selectedLang == 'en') {
-    //     street = randomItem.en;
-    //   }
-    //   else {
-    //     street = randomItem.ru;
-    //   }
-    //   newItem = {
-    //     id: randomItem.id,
-    //     name: name,
-    //     surname: surname,
-    //     phone: phone,
-    //     address: `${country}, ${randomCity}, ${street}, ${Math.floor(Math.random() * 100)} - ${Math.floor(Math.random() * 30)}`,
-    //   };
-    //   console.log(newItem);
-    // });
+    return this.getJSON('../assets/data/names.json').pipe(
+      switchMap(data => {
+        let randomItem = data[Math.floor(Math.random() * data.length)];
+        if (this.selectedLang == 'en') name = randomItem.en;
+        else name = randomItem.ru;
+        newItem = { ...newItem, name: name };
+        return of(newItem);
+      }),
+      switchMap(res => this.getJSON('../assets/data/surnames.json').pipe(map(data => {
+        let randomItem = data[Math.floor(Math.random() * data.length)];
+        if (this.selectedLang == 'en') surname = randomItem.en;
+        else surname = randomItem.ru;
+        newItem = { ...res, surname: surname };
+        return newItem;
+      }))),
+      switchMap(res => this.getJSON('../assets/data/phones.json').pipe(map(data => {
+        let filterItems = data.filter((item: any) => item.format == this.selectedLang);
+        let randomItem = filterItems[Math.floor(Math.random() * filterItems.length)];
+        phone = randomItem.text;
+        newItem = { ...res, phone: phone };
+        return newItem;
+      }))),
+      switchMap(res => this.getJSON('../assets/data/countries.json').pipe(map(data => {
+        let randomItem = data[Math.floor(Math.random() * data.length)];
+        if (this.selectedLang == 'en') {
+          country = randomItem.en;
+          cities = randomItem.citiesEn;
+        }
+        else {
+          country = randomItem.ru;
+          cities = randomItem.citiesRu;
+        }
+        randomCity = cities[Math.floor(Math.random() * cities.length)];
+        return res;
+      }))),
+      switchMap(res => this.getJSON('../assets/data/streets.json').pipe(map(data => {
+        let randomItem = data[Math.floor(Math.random() * data.length)];
+        if (this.selectedLang == 'en') {
+          street = randomItem.en;
+        }
+        else {
+          street = randomItem.ru;
+        }
+        newItem = {
+          ...res,
+          id: Math.random().toString(36).substring(2, 9),
+          address: `${country}, ${randomCity}, ${street}, ${Math.floor(Math.random() * 100 + 1)} - ${Math.floor(Math.random() * 30 + 1)}`,
+        };
+        return newItem;
+      }))));
   }
 
   addNames() {
