@@ -60,7 +60,7 @@ export class TableComponent implements OnInit, OnDestroy {
   }
 
   onClick() {
-    this.tableService.generate().subscribe(res => console.log(res));
+    this.tableService.DO();
   }
 
   ngOnDestroy(): void { }
