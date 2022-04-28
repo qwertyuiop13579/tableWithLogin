@@ -18,41 +18,33 @@ export class TableComponent implements OnInit, OnDestroy {
   SeedInput = "";
 
   constructor(private router: Router, private tableService: TableService) {
-    for (let i = 0; i < this.sum; i++) {
-      this.tableService.generate().pipe(take(1)).subscribe(res => {
-        this.data.push(res);
-      });
-    }
+    this.tableService.generate(this.sum).pipe(take(1)).subscribe(res => {
+      this.data = [...res];
+    });
   }
 
   ngOnInit(): void { }
 
   onScrollDown(ev: any) {
     console.log("Scrolled down! Add 10 items.");
-
-    this.sum += this.step;
     this.addItems();
 
   }
 
   addItems() {
-    this.listArray = [];
-    for (let i = 0; i < this.step; i++) {
-      this.tableService.generate().pipe(take(1)).subscribe(res => {
-        this.data.push(res);
-      });
-    }
+    this.tableService.generate(this.step).pipe(take(1)).subscribe(res => {
+      this.data = this.data.concat(res);
+    });
   }
 
   onChangeLang() {
     console.log(this.selectedLang);
     this.tableService.selectedLang = this.selectedLang;
     this.data = [];
-    for (let i = 0; i < this.sum; i++) {
-      this.tableService.generate().pipe(take(1)).subscribe(res => {
-        this.data.push(res);
-      });
-    }
+    this.tableService.generate(this.sum).pipe(take(1)).subscribe(res => {
+      this.data = this.data.concat(res);
+    });
+
   }
 
   onChangeErrorsCount() {

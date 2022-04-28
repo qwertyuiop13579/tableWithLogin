@@ -66,68 +66,83 @@ export class TableService {
     // this.http.post('http://localhost:5000/api' + '/streets', {}).subscribe(res => console.log(res));
   }
 
-  generate() {
+  generate(count: number) {
     var name = '';
-    var sex: 'male' | 'female';
+    var sex: string[] = [];
     var surname = '';
     var phone = '';
-    var country = '';
-    var cities: any;
-    var randomCity = '';
-    var street;
+    var countries: string[] = [];
+    var cities: string[] = [];
+    var randomCity: string[] = [];
+    var street = '';
     var newItem: Item;
+    var newItems: Item[] = [];
 
     return this.getJSON('assets/data/names.json').pipe(
       switchMap(data => {
-        let randomItem = data[Math.floor(Math.random() * data.length)];
-        sex = randomItem.sex;
-        if (this.selectedLang == 'en') name = randomItem.en;
-        else name = randomItem.ru;
-        newItem = { ...newItem, name: name };
-        return of(newItem);
+        for (let i = 0; i < count; i++) {
+          let randomItem = data[Math.floor(Math.random() * data.length)];
+          sex[i] = randomItem.sex;
+          if (this.selectedLang == 'en') name = randomItem.en;
+          else name = randomItem.ru;
+          newItem = { ...newItem, name: name };
+          newItems[i] = { ...newItem };
+        }
+        return of(newItems);
       }),
       switchMap(res => this.getJSON('assets/data/surnames.json').pipe(map(data => {
-        data = data.filter((item: any) => item.sex == sex);
-        let randomItem = data[Math.floor(Math.random() * data.length)];
-        if (this.selectedLang == 'en') surname = randomItem.en;
-        else surname = randomItem.ru;
-        newItem = { ...res, surname: surname };
-        return newItem;
+        for (let i = 0; i < count; i++) {
+          let filterdData = data.filter((item: any) => item.sex == sex[i]);
+          let randomItem = filterdData[Math.floor(Math.random() * filterdData.length)];
+          if (this.selectedLang == 'en') surname = randomItem.en;
+          else surname = randomItem.ru;
+          newItem = { ...res[i], surname: surname };
+          newItems[i] = { ...newItem };
+        }
+        return newItems;
       }))),
       switchMap(res => this.getJSON('assets/data/phones.json').pipe(map(data => {
         let filterItems = data.filter((item: any) => item.format == this.selectedLang);
-        let randomItem = filterItems[Math.floor(Math.random() * filterItems.length)];
-        phone = randomItem.text;
-        newItem = { ...res, phone: phone };
-        return newItem;
+        for (let i = 0; i < count; i++) {
+          let randomItem = filterItems[Math.floor(Math.random() * filterItems.length)];
+          phone = randomItem.text;
+          newItem = { ...res[i], phone: phone };
+          newItems[i] = { ...newItem };
+        }
+        return newItems;
       }))),
       switchMap(res => this.getJSON('assets/data/countries.json').pipe(map(data => {
-        let randomItem = data[Math.floor(Math.random() * data.length)];
-        if (this.selectedLang == 'en') {
-          country = randomItem.en;
-          cities = randomItem.citiesEn;
+        for (let i = 0; i < count; i++) {
+          let randomItem = data[Math.floor(Math.random() * data.length)];
+          if (this.selectedLang == 'en') {
+            countries[i] = randomItem.en;
+            cities = randomItem.citiesEn;
+          }
+          else {
+            countries[i] = randomItem.ru;
+            cities = randomItem.citiesRu;
+          }
+          randomCity[i] = cities[Math.floor(Math.random() * cities.length)];
         }
-        else {
-          country = randomItem.ru;
-          cities = randomItem.citiesRu;
-        }
-        randomCity = cities[Math.floor(Math.random() * cities.length)];
         return res;
       }))),
       switchMap(res => this.getJSON('assets/data/streets.json').pipe(map(data => {
-        let randomItem = data[Math.floor(Math.random() * data.length)];
-        if (this.selectedLang == 'en') {
-          street = randomItem.en;
+        for (let i = 0; i < count; i++) {
+          let randomItem = data[Math.floor(Math.random() * data.length)];
+          if (this.selectedLang == 'en') {
+            street = randomItem.en;
+          }
+          else {
+            street = randomItem.ru;
+          }
+          newItem = {
+            ...res[i],
+            id: Math.random().toString(36).substring(2, 12),
+            address: `${countries[i]}, ${randomCity[i]}, ${street}, ${Math.floor(Math.random() * 100 + 1)} - ${Math.floor(Math.random() * 30 + 1)}`,
+          };
+          newItems[i] = { ...newItem };
         }
-        else {
-          street = randomItem.ru;
-        }
-        newItem = {
-          ...res,
-          id: Math.random().toString(36).substring(2, 12),
-          address: `${country}, ${randomCity}, ${street}, ${Math.floor(Math.random() * 100 + 1)} - ${Math.floor(Math.random() * 30 + 1)}`,
-        };
-        return newItem;
+        return newItems;
       }))));
   }
 
