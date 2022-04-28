@@ -17,6 +17,20 @@ export class TableComponent implements OnInit, OnDestroy {
   ErrorsCount = 0;
   SeedInput = "";
 
+  CSVoptions = {
+    fieldSeparator: ',',
+    quoteStrings: '',
+    decimalseparator: '.',
+    filename: 'data',
+    showLabels: true,
+    headers: ['name', 'surname', 'address', 'phone'],
+    showTitle: true,
+    title: 'data',
+    useBom: true,
+    removeNewLines: true,
+    keys: ['name', 'surname', 'address', 'phone'],
+  };
+
   constructor(private router: Router, private tableService: TableService) {
     this.tableService.generate(this.sum).pipe(take(1)).subscribe(res => {
       this.data = [...res];

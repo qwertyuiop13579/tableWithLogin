@@ -19,6 +19,8 @@
     <button class="seed__btn">Random</button>
   </div> -->
 
+  <angular2csv [data]="data" filename="test" [options]="CSVoptions"></angular2csv>
+
   <div class="search-results" infinite-scroll [infiniteScrollDistance]="0" [infiniteScrollThrottle]="1000"
     (scrolled)="onScrollDown($event)">
     <button class="seed__btn" (click)="onClick()">DO IT</button>

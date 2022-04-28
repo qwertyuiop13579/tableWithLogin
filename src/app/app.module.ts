@@ -5,6 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { environment } from "src/environments/environment";
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore/';
+import { Angular2CsvModule } from 'angular2-csv';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -31,7 +32,8 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
     HttpClientModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFirestoreModule,
-    InfiniteScrollModule
+    InfiniteScrollModule,
+    Angular2CsvModule
   ],
   providers: [TableGuard],
   bootstrap: [AppComponent]
